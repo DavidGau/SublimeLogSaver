@@ -8,56 +8,67 @@ import pyperclip
 from win10toast import ToastNotifier as Notifier
 import time
 
-def developpment(save_dir,filename,minimize_after_op=False,notification=False):
+def developpment(window_name,save_dir,filename,minimize_after_op=False,notification=False):
 
 	notif = Notifier()
 
 	if notification: #Warns the user 2 seconds before the saving
-		notif.show_toast("Log saving in 2 seconds","Please stop typing/clicking")
+		notif.show_toast("File {} saving in 2 seconds","Please stop typing/clicking".format(window_name))
 		time.sleep(2)
 
-	
-	window_found = False
-
 	app = Application().connect(path=r"C:\Program Files (x86)\Sublime Text 3\sublime_text.exe")
-	win = app.window(title_re=".*Build output*.")
-
-	log_window = str(app.windows()[0])
+	first_window = str(app.windows()[0]).split("'")[1]
 
 	app_dialog = app.top_window()
+
+	#Gets window focus
 	app_dialog.minimize()
 	app_dialog.restore()
 
-
-	current_window = ""
-	
-	#Passes on every tabs until it finds it
-	while current_window != log_window:
-		keyboard.SendKeys('^{PGDN}') #Changing tab
-		current_window = str(app.windows()[0]) #Get window's name
-
-		if current_window.find("Build output") > -1:
-			window_found = True
-			break
-
-
 	#Save into a txt file
-	if window_found:
-		win.menu_select("Selection->Select All")	#Selecting the output's text
-		keyboard.SendKeys("^A")
-		keyboard.SendKeys("^C")						#Copy everything
-		text_to_file = pyperclip.paste()			#Clipboard's content to variable
-		
-		#Saving it into a txt file
-		new_file = open(save_dir +"\\"+ filename + ".txt","w")
-		new_file.write(text_to_file)
-		new_file.close()
+	if find_tab(app,window_name):
+
+		save_to_file(save_dir,filename,get_text())
+
+		if notification:
+			notif.show_toast("{} saved","Go on and have fun!".format(window_name))
+
+		if find_tab(app,first_window) == False: #Returns to the first tab
+			print("ERROR: Could not return to the previous window")
 
 		if minimize_after_op:
 			app_dialog.minimize()
-
-		if notification:
-			notif.show_toast("Log saved","Go on and have fun!")
 	else:
-		print("ERROR: Could not save the logs, Build output not found")
+		print("ERROR: Could not save the file: {} not found".format(window_name))
 
+
+
+
+#Saving text into a txt file
+def save_to_file(save_dir,filename,text):
+	new_file = open(save_dir +"\\"+ filename + ".txt","w")
+	new_file.write(text)
+	new_file.close()
+
+#Select,copy and returns the text
+def get_text():
+	keyboard.SendKeys("^A")
+	keyboard.SendKeys("^C")						#Copy everything
+	text_to_file = pyperclip.paste()			#Clipboard's content to variable
+
+	return text_to_file
+
+#Finds a tab by it's approximated name
+def find_tab(app,name):
+	current_window = ""
+	starting_window = str(app.windows()[0]).split("'")[1]
+
+	#Passes on every tabs until it finds it /or/ gets back to the starts
+	while current_window != starting_window:
+		keyboard.SendKeys('^{PGDN}') #Changing tab
+		current_window = str(app.windows()[0]).split("'")[1] #Get window's name
+
+		if current_window.find(name) > -1:
+			return True
+
+	return False
