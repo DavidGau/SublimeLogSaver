@@ -13,7 +13,7 @@ def developpment(window_name,save_dir,filename,minimize_after_op=False,notificat
 	notif = Notifier()
 
 	if notification: #Warns the user 2 seconds before the saving
-		notif.show_toast("File {} saving in 2 seconds","Please stop typing/clicking".format(window_name))
+		notif.show_toast("File \"{}\" saving in 2 seconds".format(window_name),"Please stop typing/clicking")
 		time.sleep(2)
 
 	app = Application().connect(path=r"C:\Program Files (x86)\Sublime Text 3\sublime_text.exe")
@@ -31,7 +31,7 @@ def developpment(window_name,save_dir,filename,minimize_after_op=False,notificat
 		save_to_file(save_dir,filename,get_text())
 
 		if notification:
-			notif.show_toast("{} saved","Go on and have fun!".format(window_name))
+			notif.show_toast("File \"{}\" saved".format(window_name),"Go on and have fun!")
 
 		if find_tab(app,first_window) == False: #Returns to the first tab
 			print("ERROR: Could not return to the previous window")
@@ -39,7 +39,7 @@ def developpment(window_name,save_dir,filename,minimize_after_op=False,notificat
 		if minimize_after_op:
 			app_dialog.minimize()
 	else:
-		print("ERROR: Could not save the file: {} not found".format(window_name))
+		print("ERROR: Could not save the file: \"{}\" not found".format(window_name))
 
 
 
