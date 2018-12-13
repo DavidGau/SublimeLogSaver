@@ -12,7 +12,7 @@ def developpment(save_dir,filename,minimize_after_op=False,notification=False):
 
 	notif = Notifier()
 
-	if notification: #If notifications are enabled, warn the user
+	if notification: #Warns the user 2 seconds before the saving
 		notif.show_toast("Log saving in 2 seconds","Please stop typing/clicking")
 		time.sleep(2)
 
@@ -58,4 +58,6 @@ def developpment(save_dir,filename,minimize_after_op=False,notification=False):
 
 		if notification:
 			notif.show_toast("Log saved","Go on and have fun!")
+	else:
+		print("ERROR: Could not save the logs, Build output not found")
 
