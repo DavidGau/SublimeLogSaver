@@ -12,7 +12,8 @@ def developpment(window_name,save_dir,filename,minimize_after_op=False,notificat
 
 	notif = Notifier()
 
-	if notification: #Warns the user 2 seconds before the saving
+	#Warns the user 2 seconds before the saving if activated
+	if notification: 
 		notif.show_toast("File \"{}\" saving in 2 seconds".format(window_name),"Please stop typing/clicking")
 		time.sleep(2)
 
@@ -21,11 +22,12 @@ def developpment(window_name,save_dir,filename,minimize_after_op=False,notificat
 
 	app_dialog = app.top_window()
 
-	#Gets window focus
-	app_dialog.minimize()
-	app_dialog.restore()
+	#Gets window focus if needed
+	if app_dialog.has_keyboard_focus() == False:
+		app_dialog.minimize()
+		app_dialog.restore()
 
-	#Save into a txt file
+
 	if find_tab(app,window_name):
 
 		save_to_file(save_dir,filename,get_text())
@@ -40,8 +42,6 @@ def developpment(window_name,save_dir,filename,minimize_after_op=False,notificat
 			app_dialog.minimize()
 	else:
 		print("ERROR: Could not save the file: \"{}\" not found".format(window_name))
-
-
 
 
 #Saving text into a txt file
@@ -66,9 +66,9 @@ def find_tab(app,name):
 	#Passes on every tabs until it finds it /or/ gets back to the starts
 	while current_window != starting_window:
 		keyboard.SendKeys('^{PGDN}') #Changing tab
-		current_window = str(app.windows()[0]).split("'")[1] #Get window's name
+		current_window = str(app.windows()[0]).split("'")[1].lower() #Get window's name
 
-		if current_window.find(name) > -1:
+		if current_window.find(name.lower()) > -1:
 			return True
 
 	return False
