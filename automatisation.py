@@ -27,7 +27,7 @@ def developpment(window_name,save_dir,filename,minimize_after_op=False,notificat
 		app_dialog.minimize()
 		app_dialog.restore()
 
-
+	#Saves everything
 	if find_tab(app,window_name):
 
 		save_to_file(save_dir,filename,get_text())
@@ -52,9 +52,13 @@ def save_to_file(save_dir,filename,text):
 
 #Select,copy and returns the text
 def get_text():
+	content = pyperclip.paste() 				#Gets clipboard's content before the action
+
 	keyboard.SendKeys("^A")
 	keyboard.SendKeys("^C")						#Copy everything
 	text_to_file = pyperclip.paste()			#Clipboard's content to variable
+
+	pyperclip.copy(content)						#Gets what it had before
 
 	return text_to_file
 
