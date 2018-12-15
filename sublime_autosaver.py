@@ -1,16 +1,35 @@
 """
-	Function that saves the sublime build output into a txt file.
-	Requirements: Having the build output on another window
+	sublime_autosaver.py:
+
+	Saves an opened file's content into
+	a .txt file.
+
+	This has first been created in order
+	to save the logs while executing a 
+	program.
+
 """
 from pywinauto.application import Application
 from pywinauto import keyboard
 import pyperclip
 from win10toast import ToastNotifier as Notifier
-import time
-import os
+from os import makedirs,path
 from datetime import datetime
 
-def developpment(window_name,filename,save_dir="./SublimeSaveTemp",minimize=False,notification=False):
+
+def save_file(window_name,filename,save_dir="./SublimeSaveTemp",minimize=False,notification=False):
+
+	""" Auto file saver for Sublime Text
+		
+		Args:
+			window_name  (str):  The name of the file to be saved (it can be a partial name)
+			filename	 (str):  Name of the file once it's saved.
+			save_dir	 (str):	 Directory where the file will be saved.
+			minimize 	 (bool): Tells if sublime text shall be minimized after the operation is completed.
+			notification (bool): Tells the user before and after saving in order to eliminate most error risks
+		Returns:
+			Nothing.
+	"""
 
 	notif = Notifier()
 
@@ -45,10 +64,20 @@ def developpment(window_name,filename,save_dir="./SublimeSaveTemp",minimize=Fals
 		print("ERROR: Could not save the file: \"{}\" not found".format(window_name))
 
 
-#Saving text into a txt file
 def save_to_file(save_dir,filename,text):
 
-	header = "\n ====== Sublime Autosaver ====== Time: {} \n".format(datetime.now())	#Appears at the beginning of the file
+	""" Saves text into a file
+
+		Args:
+			save_dir: Directory where the file will be saved.
+			filename: Name of the file once it's saved.
+			text: 	  Text to be saved.
+
+		Returns:
+			Nothing.
+	"""
+
+	header = "\n====== Sublime Autosaver ====== Time: {} \n".format(datetime.now())	#Appears at the beginning of the file
 
 	try:												#Test if the path's good
 		new_file = open(save_dir +"\\"+ filename + ".txt","a") #Appends at the end of the file if already exists
@@ -63,8 +92,16 @@ def save_to_file(save_dir,filename,text):
 	new_file.write(text)
 	new_file.close()
 
-#Select,copy and returns the text
+
 def get_text():
+
+	""" Copies the text from the wanted file (window_name)
+
+		Args:
+			None.
+		Returns:
+			The wanted text (str)
+	"""
 	content = pyperclip.paste() 				#Gets clipboard's content before the action
 
 	keyboard.SendKeys("^A")
@@ -75,14 +112,24 @@ def get_text():
 
 	return text_to_file
 
-#Finds a tab by it's approximated name
+
 def find_tab(app,name):
+
+	""" Switches tabs until it finds the good one
+		
+		Args:
+			app: The application's object.
+			name: Name of the tab to be found.
+		Returns:
+			Bool
+	"""
+
 	current_window = ""
 	starting_window = str(app.windows()[0]).split("'")[1]
 
 	#Passes on every tabs until it finds it /or/ gets back to the starts
 	while current_window != starting_window:
-		keyboard.SendKeys('^{PGDN}') 								#Changing tab
+		keyboard.SendKeys('^{PGDN}') 								 #Changing tab
 		current_window = str(app.windows()[0]).split("'")[1].lower() #Get window's name
 
 		if current_window.find(name.lower()) > -1:
