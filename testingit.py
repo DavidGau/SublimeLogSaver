@@ -8,5 +8,5 @@ while i < 1:
 	print("Test de l'enregistreur de logs")
 	print(datetime.datetime.now())
 
-	developpment("build","C:\\Users\\Dave\\Desktop\\testingit","hdg{0}".format(i))
+	developpment("build","hdg{0}".format(i),notification=True)
 	i += 1
