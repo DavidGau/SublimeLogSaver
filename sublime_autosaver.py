@@ -83,8 +83,8 @@ def save_to_file(save_dir,filename,text):
 		new_file = open(save_dir +"\\"+ filename + ".txt","a") #Appends at the end of the file if already exists
 	except FileNotFoundError:							#If the path doesn't exist
 
-		if not os.path.exists("./SublimeSaveTemp"):		#Creates the directory
-   			os.makedirs("./SublimeSaveTemp")
+		if not path.exists("./SublimeSaveTemp"):		#Creates the directory
+   			makedirs("./SublimeSaveTemp")
 
 		new_file = open("./SublimeSaveTemp/" + filename + ".txt","a")
 
